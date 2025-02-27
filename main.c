@@ -3,11 +3,14 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <termios.h>
+#include <time.h>
 
-#include "components_headers/types.h"
 
+#include "types.h"
 #include "components_headers/field_manager.h"
+#include "objects/objects.h"
 #include "components_headers/object_manager.h"
+
 
 
 void* key_reader(void *args){
@@ -50,8 +53,10 @@ void* key_reader(void *args){
 }
 
 int main(void) {
+    srand(time(NULL));
 
-    Object* current_obj = NULL;
+    Type t = generate_type();
+    Object* current_obj = create_object(t);
 
     static pthread_t thread_id;
     if (!thread_id) {
