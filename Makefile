@@ -1,5 +1,5 @@
 
-compile: main.c
+compile: main.c components/field_manager.c components/object_manager.c
 	@(clang $? -o main.o || gcc $? -o main.o) && echo 'Yo, aka'
 
 run: compile
