@@ -1,6 +1,8 @@
 
-#define FIGURE_BLOCK '#'
+#ifndef OBJECT_SET
+#define OBJECT_SET
 
+#define FIGURE_BLOCK '#'
 typedef struct object {
     Type type;
 
@@ -14,8 +16,10 @@ typedef struct object {
 
     void (*rotate)(struct object*);
     void (*build)(struct object*);
-    void (*move)(struct object*);
+    void (*move)(struct object*, Actions);
 } Object;
 
 Object* create_object(Type t);
 Type generate_type();
+
+#endif

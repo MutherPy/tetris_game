@@ -6,11 +6,10 @@
 #include <time.h>
 
 
-#include "types.h"
-#include "components_headers/field_manager.h"
-#include "objects/objects.h"
-#include "components_headers/object_manager.h"
-
+#include "../include/types.h"
+#include "../include/field_manager.h"
+#include "../include/object.h"
+#include "../include/object_manager.h"
 
 
 void* key_reader(void *args){
@@ -38,13 +37,13 @@ void* key_reader(void *args){
         }
         switch (_case){
             case 'C':
-                object_controller(RIGHT, current_obj);
+                object_manager(RIGHT, current_obj);
                 break;
             case 'D':
-                object_controller(LEFT, current_obj);
+                object_manager(LEFT, current_obj);
                 break;
             case ' ':
-                object_controller(ROTATE, current_obj);
+                object_manager(ROTATE, current_obj);
                 break;
             default:
                 continue;
@@ -70,6 +69,7 @@ int main(void) {
     while (1) {
         system("clear");
         draw_field(field);
+        object_manager(DOWN, current_obj);
         sleep(2);
     }
     return 0;

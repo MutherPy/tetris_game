@@ -1,16 +1,14 @@
 
+SRC_DIR := src
 
-targets = components/field_manager.c \
-	components/object_manager.c \
-	objects/object.c \
-	objects/object_calculator/object_calculator.c \
-	main.c
+
+targets := $(wildcard $(SRC_DIR)/**/*.c) $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*/*.c)
 
 compile: $(targets)
-	@(clang $? -o main.o || gcc $? -o main.o) && echo 'Yo, aka'
+	@(clang $? -o bin/main.o || gcc $? -o bin/main.o) && echo 'Yo, aka'
 
 run: compile
-	@./main.o
+	@./bin/main
 
 build: compile run
 

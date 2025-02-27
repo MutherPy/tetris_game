@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
-#include "../types.h"
-#include "objects.h"
-#include "object_calculator/object_calculator.h"
+#include "../../include/types.h"
+#include "../../include/object.h"
+#include "../../include/object_controller.h"
 
 
 Object* create_object(Type t){
