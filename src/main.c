@@ -11,7 +11,6 @@
 #include "../include/object.h"
 #include "../include/object_manager.h"
 
-
 void* key_reader(void *args){
     static char key;
     struct termios info;
@@ -23,7 +22,7 @@ void* key_reader(void *args){
 
     char _case;
 
-    Object* current_obj = (Object*)args;
+    Object** current_obj_ptr = (Object**)args;
 
     while (1)
     {
@@ -37,13 +36,13 @@ void* key_reader(void *args){
         }
         switch (_case){
             case 'C':
-                object_manager(RIGHT, current_obj);
+                object_manager(RIGHT, *current_obj_ptr);
                 break;
             case 'D':
-                object_manager(LEFT, current_obj);
+                object_manager(LEFT, *current_obj_ptr);
                 break;
             case ' ':
-                object_manager(ROTATE, current_obj);
+                object_manager(ROTATE, *current_obj_ptr);
                 break;
             default:
                 continue;
@@ -56,10 +55,11 @@ int main(void) {
 
     Type t = generate_type();
     Object* current_obj = create_object(t);
+    Object** current_obj_ptr = &current_obj;
 
     static pthread_t thread_id;
     if (!thread_id) {
-        pthread_create(&thread_id, NULL, key_reader, current_obj);
+        pthread_create(&thread_id, NULL, key_reader, current_obj_ptr);
     }
 
     char** field = init_fill_field();
@@ -71,6 +71,11 @@ int main(void) {
         draw_field(field);
         object_manager(DOWN, current_obj);
         sleep(2);
+
+        free(current_obj);
+        t = generate_type();
+        printf("%d\n", t);
+        current_obj = create_object(t);
     }
     return 0;
 }
