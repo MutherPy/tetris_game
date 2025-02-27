@@ -2,7 +2,11 @@
 SRC_DIR := src
 
 
-targets := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/**/*.c) $(wildcard $(SRC_DIR)/*/*/*.c) $(wildcard $(SRC_DIR)/*/*/*/*.c)
+targets := \
+ $(wildcard $(SRC_DIR)/*.c) \
+ $(wildcard $(SRC_DIR)/**/*.c) \
+ $(wildcard $(SRC_DIR)/*/*/*.c) \
+ $(wildcard $(SRC_DIR)/*/*/*/*.c)
 
 compile: $(targets)
 	#echo $?
