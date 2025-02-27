@@ -1,25 +1,26 @@
 
+#ifndef TYPES_SET
+    #include "types.h"
+    #define TYPES_SET
+#endif
+
 #ifndef OBJECT_SET
 #define OBJECT_SET
 
-#define FIGURE_BLOCK '#'
-typedef struct object {
-    Type type;
+    #define FIGURE_BLOCK '#'
 
-    int x_l_u;
-    int y_l_u;
+    typedef struct object {
+        Type type;
 
-    int x_r_d;
-    int y_r_d;
+        char* figure;
 
-    char* figure;
+        void (*rotate)(struct object*);
+        void (*build)(struct object*);
+        void (*move)(struct object*, Actions);
+    } Object;
 
-    void (*rotate)(struct object*);
-    void (*build)(struct object*);
-    void (*move)(struct object*, Actions);
-} Object;
-
-Object* create_object(Type t);
-Type generate_type();
+    static void object_methods_setter(Object* obj);
+    Object* create_object(Type t);
+    Type generate_type();
 
 #endif
