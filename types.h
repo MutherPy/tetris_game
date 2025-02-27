@@ -2,7 +2,8 @@
 typedef enum actions {
     LEFT=1,
     RIGHT=2,
-    ROTATE=3
+    ROTATE=3,
+    DOWN=4
 } Actions;
 
 

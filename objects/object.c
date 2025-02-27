@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
 
 #include "../types.h"
@@ -15,20 +13,10 @@ Object* create_object(Type t){
     new-> x_r_d=0;
     new-> y_r_d=0;
 
-    switch (t) {
-        case LINE:
-            new->figure = (void *)LINE_FIGURE;
-            break;
-        case SS:
-            new->figure = (void *)SS_FIGURE;
-            break;
-        case SQW:
-            new->figure = (void *)SQW_FIGURE;
-            break;
-    }
-
     new->rotate = rotate_object;
-    return NULL;
+    new->build = build_object;
+    new->move = move_object;
+    return new;
 }
 
 Type generate_type(){
