@@ -55,22 +55,22 @@ int main(void) {
 
     Type t = generate_type();
     Object* current_obj = create_object(t);
-    Object** current_obj_ptr = &current_obj;
 
     static pthread_t thread_id;
     if (!thread_id) {
-        pthread_create(&thread_id, NULL, key_reader, current_obj_ptr);
+        pthread_create(&thread_id, NULL, key_reader, &current_obj);
     }
 
-    char** field = init_fill_field();
-    if(field == NULL){
-        return 1;
-    }
     while (1) {
         system("clear");
-        draw_field(field);
+
+        // TODO current_obj->figure must appear here already
+
         object_manager(DOWN, current_obj);
+
+        draw_field();
         sleep(2);
+
 
         free(current_obj);
         t = generate_type();
