@@ -52,7 +52,7 @@ void* key_reader(void *args){
 }
 
 int main(void) {
-    srand(time(NULL));
+    srand(time(0));
 
     ObjectType t = generate_type();
     Object* current_obj = create_object(t);
@@ -71,13 +71,9 @@ int main(void) {
 
         // TODO mb put in separate thr to avoid quick moving but increase response from logic
         object_action_manager(DOWN, current_obj);
-
-        // current_obj->build(current_obj);
-        // mesh(current_obj); // mesh all to gather ->> object + filled field's part
-
+//
         manage_field(current_obj);
-        sleep(2);
-
+        sleep(1);
 
 //        free(current_obj);
 //        t = generate_type();

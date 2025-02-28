@@ -42,5 +42,5 @@ Object* create_object(ObjectType t){
 }
 
 ObjectType generate_type(){
-    return (rand() % 3) + 1;
+    return rand() % 3 + 1;
 }

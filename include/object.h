@@ -5,8 +5,10 @@
 #endif
 
 #ifndef OBJECT_SET
-#define OBJECT_SET
+    #define OBJECT_SET
     typedef unsigned short us_type;
+
+    #define COORD_UNIT_SIZE 2
 
     typedef struct object {
         ObjectType type;
@@ -14,7 +16,7 @@
         bool is_rotated;
         bool is_collision;
 
-        us_type figure_size;
+        ObjectSize figure_size;
         us_type** figure;
 
         void (*rotate)(struct object*);
