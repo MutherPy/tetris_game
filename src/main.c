@@ -7,9 +7,10 @@
 
 
 #include "../include/types.h"
-#include "../include/field_manager.h"
 #include "../include/object.h"
 #include "../include/object_manager.h"
+#include "../include/field_manager.h"
+
 
 void* key_reader(void *args){
     static char key;
@@ -36,13 +37,13 @@ void* key_reader(void *args){
         }
         switch (_case){
             case 'C':
-                object_manager(RIGHT, *current_obj_ptr);
+                object_action_manager(RIGHT, *current_obj_ptr);
                 break;
             case 'D':
-                object_manager(LEFT, *current_obj_ptr);
+                object_action_manager(LEFT, *current_obj_ptr);
                 break;
             case ' ':
-                object_manager(ROTATE, *current_obj_ptr);
+                object_action_manager(ROTATE, *current_obj_ptr);
                 break;
             default:
                 continue;
@@ -53,8 +54,10 @@ void* key_reader(void *args){
 int main(void) {
     srand(time(NULL));
 
-    Type t = generate_type();
+    ObjectType t = generate_type();
     Object* current_obj = create_object(t);
+
+    filled_field_init();
 
     static pthread_t thread_id;
     if (!thread_id) {
@@ -66,16 +69,20 @@ int main(void) {
 
         // TODO current_obj->figure must appear here already
 
-        object_manager(DOWN, current_obj);
+        // TODO mb put in separate thr to avoid quick moving but increase response from logic
+        object_action_manager(DOWN, current_obj);
 
-        draw_field();
+        // current_obj->build(current_obj);
+        // mesh(current_obj); // mesh all to gather ->> object + filled field's part
+
+        manage_field(current_obj);
         sleep(2);
 
 
-        free(current_obj);
-        t = generate_type();
-        printf("%d\n", t);
-        current_obj = create_object(t);
+//        free(current_obj);
+//        t = generate_type();
+//        printf("%d\n", t);
+//        current_obj = create_object(t);
     }
     return 0;
 }

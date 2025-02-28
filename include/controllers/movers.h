@@ -1,4 +1,4 @@
 
-void line_figure_mover(Object*, Actions);
-void ss_figure_mover(Object*, Actions);
-void sqw_figure_mover(Object*, Actions);
+void line_figure_mover(Object*, ObjectAction);
+void ss_figure_mover(Object*, ObjectAction);
+void sqw_figure_mover(Object*, ObjectAction);

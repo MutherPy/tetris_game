@@ -1,2 +1,2 @@
 
-void object_manager(Actions action, Object* current_obj);
+void object_action_manager(ObjectAction action, Object* current_obj);

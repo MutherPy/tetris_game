@@ -14,5 +14,4 @@ void ss_figure_rotator(Object* obj){
 
 void sqw_figure_rotator(Object* obj){
     puts("SQW ROTATOR");
-
 }
