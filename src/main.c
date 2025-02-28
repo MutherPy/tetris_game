@@ -55,6 +55,7 @@ int main(void) {
     srand(time(0));
 
     ObjectType t = generate_type();
+    t=2;
     Object* current_obj = create_object(t);
 
     filled_field_init();
