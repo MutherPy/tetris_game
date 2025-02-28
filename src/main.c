@@ -67,8 +67,6 @@ int main(void) {
     while (1) {
         system("clear");
 
-        // TODO current_obj->figure must appear here already
-
         // TODO mb put in separate thr to avoid quick moving but increase response from logic
         object_action_manager(DOWN, current_obj);
 //
