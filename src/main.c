@@ -55,7 +55,7 @@ int main(void) {
     srand(time(0));
 
     ObjectType t = generate_type();
-    t=2;
+    t=1;
     Object* current_obj = create_object(t);
 
     filled_field_init();
@@ -69,10 +69,10 @@ int main(void) {
         system("clear");
 
         // TODO mb put in separate thr to avoid quick moving but increase response from logic
-        object_action_manager(DOWN, current_obj);
 //
         manage_field(current_obj);
         sleep(1);
+        object_action_manager(DOWN, current_obj);
 
 //        free(current_obj);
 //        t = generate_type();
