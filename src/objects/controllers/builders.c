@@ -1,5 +1,6 @@
-#include "../../../../include/object.h"
-#include "../../../../include/utils.h"
+#include "../../../include/object.h"
+#include "../../../include/utils.h"
+
 
 void line_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 2;

@@ -1,4 +1,5 @@
-#include "../../../../include/object.h"
+#include "../../../include/object.h"
+
 
 void line_figure_rotator(Object* obj){
     us_type mid = obj->figure_size / 2;

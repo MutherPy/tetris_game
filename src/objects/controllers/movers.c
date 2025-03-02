@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../../../../include/object.h"
+#include "../../../include/object.h"
 
 static void down_mover(us_type** figure, us_type size){
     for (int i=0; i<size; i++){

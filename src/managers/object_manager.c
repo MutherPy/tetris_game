@@ -13,7 +13,6 @@ void object_action_manager(ObjectAction action, Object* current_obj){
             current_obj->move(current_obj, action);
             break;
         case ROTATE:
-            puts("ROTATOR");
             current_obj->rotate(current_obj);
             break;
     }
