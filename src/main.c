@@ -63,8 +63,7 @@ void* downer(void *args){
 int main(void) {
     srand(time(0));
 
-    ObjectType t = generate_type();
-    Object* current_obj = create_object(t);
+    Object* current_obj = new_object();
 
     filled_field_init();
 
@@ -77,15 +76,10 @@ int main(void) {
     while (1) {
         system("clear");
 
-        // TODO mb put in separate thr to avoid quick moving but increase response from logic
-//
         manage_field(current_obj);
+        if (current_obj->is_collision)
+            next_object(&current_obj);
         usleep(90000);
-
-//        free(current_obj);
-//        t = generate_type();
-//        printf("%d\n", t);
-//        current_obj = create_object(t);
     }
     return 0;
 }

@@ -9,4 +9,6 @@
 
     us_type** memory_allocator(us_type outer_size, us_type inner_size);
 
+    void free_object(Object* current_object);
+
 #endif

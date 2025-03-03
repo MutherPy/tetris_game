@@ -22,21 +22,6 @@ void filled_field_init(){
     filled_field = memory_allocator(FILLED_FIELD_INIT_SIZE, COORD_UNIT_SIZE);
 }
 
-// TODO add realocation if overfill
-static void save_filled_field(Object* current_object){
-    for(int i=0; i<current_object->figure_size; i++){
-        for(int j=0; j<COORD_UNIT_SIZE; j++){
-            filled_field[i+FILLED_FIELD_LAST_INDEX][j] = current_object->figure[i][j];
-        }
-    }
-    FILLED_FIELD_LAST_INDEX += current_object->figure_size;
-}
-
-static bool collision_check(Object* current_obj){
-    current_obj->is_collision = false;
-    return false;
-}
-
 static void edge_control(Object* current_obj){
     us_type** fig = current_obj->figure;
     bool is_movable_left = true, is_movable_right = true, is_movable_down = true;
@@ -51,6 +36,26 @@ static void edge_control(Object* current_obj){
     current_obj->is_movable_left = is_movable_left;
     current_obj->is_movable_right = is_movable_right;
     current_obj->is_movable_down = is_movable_down;
+}
+
+static void collision_check(Object* current_obj){
+    us_type** fig = current_obj->figure;
+    for(int i = 0; i < current_obj->figure_size; i++) {
+        us_type y = fig[i][1];
+        if (y >= FIELD_ROWS-1){
+            current_obj->is_collision = true;
+            return;
+        }
+    }
+}
+
+static void save_filled_field(Object* current_object){
+    for(int i = 0; i < current_object->figure_size; i++){
+        for(int j = 0; j < COORD_UNIT_SIZE; j++){
+            filled_field[i+FILLED_FIELD_LAST_INDEX][j] = current_object->figure[i][j];
+        }
+    }
+    FILLED_FIELD_LAST_INDEX += current_object->figure_size;
 }
 
 static us_type** mesh(Object* current_obj, us_type mesh_sum){
@@ -78,9 +83,10 @@ static void draw_field(us_type** m, us_type sum){
 }
 
 void manage_field(Object* current_obj){
+    if (current_obj == NULL) return;
     edge_control(current_obj);
-    bool collision = collision_check(current_obj);
-    if (collision)
+    collision_check(current_obj);
+    if (current_obj->is_collision)
         save_filled_field(current_obj);
     us_type sum = current_obj->figure_size + FILLED_FIELD_INIT_SIZE;
     us_type** m = mesh(current_obj, sum);
