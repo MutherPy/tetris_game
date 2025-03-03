@@ -32,8 +32,14 @@ Object* create_object(ObjectType t){
     Object* new = (Object*) malloc(sizeof(Object));
     new->type = t;
     object_method_setter(new);
+
     new->is_rotated = false;
     new->is_collision = false;
+
+    new->is_movable_left = true;
+    new->is_movable_right = true;
+    new->is_movable_down = true;
+
     new->build(new);
     return new;
 }

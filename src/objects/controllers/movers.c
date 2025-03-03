@@ -22,12 +22,15 @@ static void right_mover(us_type** figure, us_type size){
 void figure_mover(Object* obj, ObjectAction action){
     switch (action) {
         case DOWN:
+            if (!obj->is_movable_down) break;
             down_mover(obj->figure, obj->figure_size);
             break;
         case LEFT:
+            if (!obj->is_movable_left) break;
             left_mover(obj->figure, obj->figure_size);
             break;
         case RIGHT:
+            if (!obj->is_movable_right) break;
             right_mover(obj->figure, obj->figure_size);
             break;
         default:

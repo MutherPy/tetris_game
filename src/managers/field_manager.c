@@ -37,6 +37,22 @@ static bool collision_check(Object* current_obj){
     return false;
 }
 
+static void edge_control(Object* current_obj){
+    us_type** fig = current_obj->figure;
+    bool is_movable_left = true, is_movable_right = true, is_movable_down = true;
+    for(int i = 0; i < current_obj->figure_size; i++){
+        us_type x = fig[i][0];
+        us_type y = fig[i][1];
+
+        if (is_movable_left) is_movable_left = (x > 0);
+        if (is_movable_right) is_movable_right = (x < FIELD_COLS-1);
+        if (is_movable_down) is_movable_down = (y < FIELD_ROWS-1);
+    }
+    current_obj->is_movable_left = is_movable_left;
+    current_obj->is_movable_right = is_movable_right;
+    current_obj->is_movable_down = is_movable_down;
+}
+
 static us_type** mesh(Object* current_obj, us_type mesh_sum){
     us_type** mesh = memory_allocator(mesh_sum, COORD_UNIT_SIZE);
     int offset = 0;
@@ -57,11 +73,12 @@ static void draw_field(us_type** m, us_type sum){
             }
         }
         puts(row);
-        memset(row, FIELD_FILLER, FIELD_COLS-1);
+        memset(row, FIELD_FILLER, FIELD_COLS);
     }
 }
 
 void manage_field(Object* current_obj){
+    edge_control(current_obj);
     bool collision = collision_check(current_obj);
     if (collision)
         save_filled_field(current_obj);

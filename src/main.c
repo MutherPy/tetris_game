@@ -51,6 +51,15 @@ void* key_reader(void *args){
     }
 }
 
+void* downer(void *args){
+    Object** cur_obj_ptr = (Object**)args;
+    while (1) {
+        sleep(1);
+        object_action_manager(DOWN, *cur_obj_ptr);
+    }
+
+}
+
 int main(void) {
     srand(time(0));
 
@@ -59,9 +68,10 @@ int main(void) {
 
     filled_field_init();
 
-    static pthread_t thread_id;
-    if (!thread_id) {
+    static pthread_t thread_id, downerth_id;
+    if (!thread_id && !downerth_id) {
         pthread_create(&thread_id, NULL, key_reader, &current_obj);
+        pthread_create(&downerth_id, NULL, downer, &current_obj);
     }
 
     while (1) {
@@ -70,8 +80,7 @@ int main(void) {
         // TODO mb put in separate thr to avoid quick moving but increase response from logic
 //
         manage_field(current_obj);
-        sleep(1);
-        object_action_manager(DOWN, current_obj);
+        usleep(90000);
 
 //        free(current_obj);
 //        t = generate_type();
