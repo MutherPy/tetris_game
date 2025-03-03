@@ -10,7 +10,7 @@
 #include "../include/object_manager.h"
 #include "../include/field_manager.h"
 
-#define DOWN_DELAY 500
+#define DOWN_DELAY 300
 
 bool run_game = true;
 
@@ -22,6 +22,9 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer use
             break;
         case GDK_KEY_Right:
             object_action_manager(OBJECT_ACTION_RIGHT, *current_obj_ptr);
+            break;
+        case GDK_KEY_Down:
+            object_action_manager(OBJECT_ACTION_DOWN, *current_obj_ptr);
             break;
         case GDK_KEY_space:
             object_action_manager(OBJECT_ACTION_ROTATE, *current_obj_ptr);
@@ -40,10 +43,11 @@ static void* game_logic(gpointer args){
     Object** current_obj_ptr = (Object**)args;
     DrawParams dr_params;
     while(run_game) {
-        us_type** mesh = manage_field(*current_obj_ptr);
-        dr_params.mesh = mesh;
+        dr_params.mesh = manage_field(*current_obj_ptr);
         dr_params.mesh_len = get_mesh_sum(*current_obj_ptr);
+
         g_idle_add(draw_field, &dr_params);
+
         if ((*current_obj_ptr)->is_collision)
             next_object(current_obj_ptr);
         g_usleep(90000);

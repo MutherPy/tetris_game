@@ -10,10 +10,10 @@ targets := \
 
 compile: $(targets)
 	#echo $?
-	@(clang $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main.o || gcc $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main.o) && echo 'Yo, aka'
+	@(clang $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main || gcc $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main) && echo 'Yo, aka'
 
 run: compile
-	@./bin/main.o
+	@./bin/main
 
 build: compile run
 

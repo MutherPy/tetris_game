@@ -1,11 +1,15 @@
 #include <stdio.h>
+#include <pthread.h>
 #include "../../include/object.h"
 #include "../../include/memory_utils.h"
-#include <stdlib.h>
+
+
+static pthread_mutex_t lock;
 
 
 void object_action_manager(ObjectAction action, Object* current_obj){
     if (current_obj == NULL) return;
+    pthread_mutex_lock(&lock);
     if (current_obj->is_collision) return;
     switch (action) {
         case OBJECT_ACTION_RIGHT:
@@ -17,6 +21,7 @@ void object_action_manager(ObjectAction action, Object* current_obj){
             current_obj->rotate(current_obj);
             break;
     }
+    pthread_mutex_unlock(&lock);
 }
 
 

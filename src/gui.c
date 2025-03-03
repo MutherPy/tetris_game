@@ -8,9 +8,9 @@ static void set_default_color(double color[3]){
 };
 
 static void set_block_color(double color[3]){
-    color[0] = 0.0;
-    color[1] = 1.0;
-    color[2] = 0.0;
+    color[0] = 1.0;
+    color[1] = 0.5;
+    color[2] = 0.6;
 }
 
 void update_color(us_type x, us_type y, BlockType block_type) {

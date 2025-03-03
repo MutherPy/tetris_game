@@ -34,7 +34,7 @@ static void edge_filled_control(
 ) {
     if (!FILLED_FIELD_STORE_LAST_INDEX) return;
     us_type filled_x, filled_y;
-    for (int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX - 1; i++){
+    for (int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
         filled_x = filled_field[i][0];
         filled_y = filled_field[i][1];
         if (current_x - 1 == filled_x && current_y == filled_y){
@@ -83,7 +83,7 @@ static void collision_check(Object* current_obj){
             return;
         }
 
-        for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX - 1; j++){
+        for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
             if (x == filled_field[j][0] && y+1 == filled_field[j][1]){
                 current_obj->is_collision = true;
                 return;
