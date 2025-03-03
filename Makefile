@@ -10,7 +10,7 @@ targets := \
 
 compile: $(targets)
 	#echo $?
-	@(clang $? -o bin/main.o || gcc $? -o bin/main.o) && echo 'Yo, aka'
+	@(clang $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main.o || gcc $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main.o) && echo 'Yo, aka'
 
 run: compile
 	@./bin/main.o

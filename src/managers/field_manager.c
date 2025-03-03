@@ -4,6 +4,7 @@
 
 #include "../../include/object.h"
 #include "../../include/memory_utils.h"
+#include "../../include/gui.h"
 
 #define FIELD_FILLER '+'
 #define FIGURE_BLOCK '#'
@@ -25,12 +26,12 @@ void filled_field_init(){
 }
 
 static void edge_filled_control(
-        us_type current_x,
-        us_type current_y,
-        bool* is_movable_left_ptr,
-        bool* is_movable_right_ptr,
-        Object* current_obj
-    ){
+    us_type current_x,
+    us_type current_y,
+    bool* is_movable_left_ptr,
+    bool* is_movable_right_ptr,
+    Object* current_obj
+) {
     if (!FILLED_FIELD_STORE_LAST_INDEX) return;
     us_type filled_x, filled_y;
     for (int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX - 1; i++){
@@ -120,29 +121,16 @@ static us_type** mesh(Object* current_obj, us_type mesh_sum){
     return mesh;
 }
 
-static void draw_field(us_type** m, us_type sum){
-    char row[FIELD_COLS+1] = {[0 ... FIELD_COLS-1] = FIELD_FILLER, '\0'};
-    for(int i = 0; i < FIELD_ROWS; i++){
-        for(int j = 0; j < FIELD_COLS; j++){
-            for(int k=0; k < sum; k++){
-                if(m[k][0] == j && m[k][1] == i){
-                    row[j]=FIGURE_BLOCK;
-                }
-            }
-        }
-        puts(row);
-        memset(row, FIELD_FILLER, FIELD_COLS);
-    }
+us_type get_mesh_sum(Object* current_obj){
+    return current_obj->figure_size + FILLED_FIELD_STORE_LAST_INDEX;
 }
 
-void manage_field(Object* current_obj){
-    if (current_obj == NULL) return;
+us_type** manage_field(Object* current_obj){
+    if (current_obj == NULL) return NULL;
     edge_control(current_obj);
     collision_check(current_obj);
     if (current_obj->is_collision)
         save_filled_field(current_obj);
-    us_type sum = current_obj->figure_size + FILLED_FIELD_STORE_LAST_INDEX;
-    us_type** m = mesh(current_obj, sum);
-    draw_field(m, sum);
-    free(m);
+    us_type sum = get_mesh_sum(current_obj);
+    return mesh(current_obj, sum);
 }

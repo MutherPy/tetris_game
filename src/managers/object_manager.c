@@ -8,12 +8,12 @@ void object_action_manager(ObjectAction action, Object* current_obj){
     if (current_obj == NULL) return;
     if (current_obj->is_collision) return;
     switch (action) {
-        case RIGHT:
-        case LEFT:
-        case DOWN:
+        case OBJECT_ACTION_RIGHT:
+        case OBJECT_ACTION_LEFT:
+        case OBJECT_ACTION_DOWN:
             current_obj->move(current_obj, action);
             break;
-        case ROTATE:
+        case OBJECT_ACTION_ROTATE:
             current_obj->rotate(current_obj);
             break;
     }

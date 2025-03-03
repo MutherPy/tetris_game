@@ -1,13 +1,11 @@
 
 #ifndef TYPES_SET
-#include "types.h"
+    #include "types.h"
     #define TYPES_SET
 #endif
 
 #ifndef OBJECT_SET
     #define OBJECT_SET
-    typedef unsigned short us_type;
-
     #define COORD_UNIT_SIZE 2
 
     typedef struct object {

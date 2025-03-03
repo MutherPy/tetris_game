@@ -4,8 +4,8 @@
 
 void line_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 2;
-    us_type** line = memory_allocator(LINE_SIZE, COORD_UNIT_SIZE);
-    for (int i = 0; i < LINE_SIZE; i++){
+    us_type** line = memory_allocator(OBJECT_SIZE_LINE, COORD_UNIT_SIZE);
+    for (int i = 0; i < OBJECT_SIZE_LINE; i++){
         line[i][0] = left + i;
         line[i][1] = 0;
     }
@@ -14,10 +14,10 @@ void line_figure_builder(Object* obj){
 
 void ss_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 3;
-    us_type** ss = memory_allocator(SS_SIZE, COORD_UNIT_SIZE);
+    us_type** ss = memory_allocator(OBJECT_SIZE_SS, COORD_UNIT_SIZE);
     us_type h = 1;
     us_type w = 2;
-    for (int i = 0; i < SS_SIZE; i++){
+    for (int i = 0; i < OBJECT_SIZE_SS; i++){
         ss[i][0] = left + i;
         ss[i][1] = h;
         if (i == w){
@@ -30,10 +30,10 @@ void ss_figure_builder(Object* obj){
 
 void sqw_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 1;
-    us_type** ss = memory_allocator(SQW_SIZE, COORD_UNIT_SIZE);
+    us_type** ss = memory_allocator(OBJECT_SIZE_SQW, COORD_UNIT_SIZE);
     us_type h = 0;
     us_type w = 1;
-    for (int i = 0; i < SQW_SIZE; i++){
+    for (int i = 0; i < OBJECT_SIZE_SQW; i++){
         ss[i][0] = left + i;
         ss[i][1] = h;
         if (i == w){

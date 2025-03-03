@@ -9,20 +9,20 @@
 
 static void object_method_setter(Object* obj){
     switch (obj->type) {
-        case LINE:
+        case OBJECT_TYPE_LINE:
             obj->rotate = line_figure_rotator;
             obj->build = line_figure_builder;
-            obj->figure_size = LINE_SIZE;
+            obj->figure_size = OBJECT_SIZE_LINE;
             break;
-        case SS:
+        case OBJECT_TYPE_SS:
             obj->rotate = ss_figure_rotator;
             obj->build = ss_figure_builder;
-            obj->figure_size = SS_SIZE;
+            obj->figure_size = OBJECT_SIZE_SS;
             break;
-        case SQW:
+        case OBJECT_TYPE_SQW:
             obj->rotate = sqw_figure_rotator;
             obj->build = sqw_figure_builder;
-            obj->figure_size = SQW_SIZE;
+            obj->figure_size = OBJECT_SIZE_SQW;
             break;
     }
     obj->move = figure_mover;

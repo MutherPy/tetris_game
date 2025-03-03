@@ -3,27 +3,29 @@
 #ifndef TYPES_SET
     #define TYPES_SET
 
-    #define FIELD_ROWS 10
-    #define FIELD_COLS 30
+    #define FIELD_ROWS 20
+    #define FIELD_COLS 20
+
+    typedef unsigned short us_type;
 
     typedef enum act {
-        LEFT=1,
-        RIGHT=2,
-        ROTATE=3,
-        DOWN=4
+        OBJECT_ACTION_LEFT=1,
+        OBJECT_ACTION_RIGHT=2,
+        OBJECT_ACTION_ROTATE=3,
+        OBJECT_ACTION_DOWN=4
     } ObjectAction;
 
 
     typedef enum tp {
-        LINE=1,
-        SS=2,
-        SQW=3
+        OBJECT_TYPE_LINE=1,
+        OBJECT_TYPE_SS=2,
+        OBJECT_TYPE_SQW=3
     } ObjectType;
 
     typedef enum sizes {
-        LINE_SIZE=5,
-        SS_SIZE=6,
-        SQW_SIZE=4
+        OBJECT_SIZE_LINE=5,
+        OBJECT_SIZE_SS=6,
+        OBJECT_SIZE_SQW=4
     } ObjectSize;
 
 #endif
