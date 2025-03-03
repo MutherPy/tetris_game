@@ -3,23 +3,25 @@
 #include <string.h>
 
 #include "../../include/object.h"
-#include "../../include/utils.h"
+#include "../../include/memory_utils.h"
 
 #define FIELD_FILLER '+'
 #define FIGURE_BLOCK '#'
-
-#define FILLED_FIELD_INIT_SIZE 50
 
 // filled_coords = [[x,y], [x,y], ...]
 // x - FIELD_COLS
 // y - FIELD_ROWS
 
+
 static us_type** restrict filled_field;
-static us_type FILLED_FIELD_LAST_INDEX = 0;
+
+static const us_type FILLED_FIELD_STORE_RESIZE = 50;
+static us_type FILLED_FIELD_STORE_SIZE = 50;
+static us_type FILLED_FIELD_STORE_LAST_INDEX = 0;
 
 
 void filled_field_init(){
-    filled_field = memory_allocator(FILLED_FIELD_INIT_SIZE, COORD_UNIT_SIZE);
+    filled_field = memory_allocator(FILLED_FIELD_STORE_SIZE, COORD_UNIT_SIZE);
 }
 
 static void edge_filled_control(
@@ -29,9 +31,9 @@ static void edge_filled_control(
         bool* is_movable_right_ptr,
         Object* current_obj
     ){
-    if (!FILLED_FIELD_LAST_INDEX) return;
+    if (!FILLED_FIELD_STORE_LAST_INDEX) return;
     us_type filled_x, filled_y;
-    for (int i = 0; i < FILLED_FIELD_LAST_INDEX-1; i++){
+    for (int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX - 1; i++){
         filled_x = filled_field[i][0];
         filled_y = filled_field[i][1];
         if (current_x - 1 == filled_x && current_y == filled_y){
@@ -80,7 +82,7 @@ static void collision_check(Object* current_obj){
             return;
         }
 
-        for(int j = 0; j < FILLED_FIELD_LAST_INDEX-1; j++){
+        for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX - 1; j++){
             if (x == filled_field[j][0] && y+1 == filled_field[j][1]){
                 current_obj->is_collision = true;
                 return;
@@ -91,19 +93,29 @@ static void collision_check(Object* current_obj){
 }
 
 static void save_filled_field(Object* current_object){
+    us_type new_filled_index = FILLED_FIELD_STORE_LAST_INDEX + current_object->figure_size;
+    while (new_filled_index > FILLED_FIELD_STORE_SIZE) {
+        filled_field = memory_reallocator(
+                filled_field,
+                FILLED_FIELD_STORE_SIZE,
+                FILLED_FIELD_STORE_RESIZE,
+                COORD_UNIT_SIZE
+                );
+        FILLED_FIELD_STORE_SIZE += FILLED_FIELD_STORE_RESIZE;
+    }
     for(int i = 0; i < current_object->figure_size; i++){
         for(int j = 0; j < COORD_UNIT_SIZE; j++){
-            filled_field[i+FILLED_FIELD_LAST_INDEX][j] = current_object->figure[i][j];
+            filled_field[i + FILLED_FIELD_STORE_LAST_INDEX][j] = current_object->figure[i][j];
         }
     }
-    FILLED_FIELD_LAST_INDEX += current_object->figure_size;
+    FILLED_FIELD_STORE_LAST_INDEX = new_filled_index;
 }
 
 static us_type** mesh(Object* current_obj, us_type mesh_sum){
     us_type** mesh = memory_allocator(mesh_sum, COORD_UNIT_SIZE);
     int offset = 0;
-    memcpy(mesh, filled_field, FILLED_FIELD_INIT_SIZE * sizeof(us_type*));
-    offset += FILLED_FIELD_INIT_SIZE;
+    memcpy(mesh, filled_field, FILLED_FIELD_STORE_LAST_INDEX * sizeof(us_type*));
+    offset += FILLED_FIELD_STORE_LAST_INDEX;
     memcpy(mesh + offset, current_obj->figure, current_obj->figure_size * sizeof(us_type*));
     return mesh;
 }
@@ -129,7 +141,7 @@ void manage_field(Object* current_obj){
     collision_check(current_obj);
     if (current_obj->is_collision)
         save_filled_field(current_obj);
-    us_type sum = current_obj->figure_size + FILLED_FIELD_INIT_SIZE;
+    us_type sum = current_obj->figure_size + FILLED_FIELD_STORE_LAST_INDEX;
     us_type** m = mesh(current_obj, sum);
     draw_field(m, sum);
     free(m);
