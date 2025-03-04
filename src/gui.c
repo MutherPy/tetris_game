@@ -13,7 +13,7 @@ static void set_block_color(double color[3]){
     color[2] = 0.6;
 }
 
-void update_color(us_type x, us_type y, BlockType block_type) {
+static void update_color(us_type x, us_type y, BlockType block_type) {
     switch (block_type) {
         case BLOCK_TYPE_FILLED:
             set_block_color(squares[y][x].color);
@@ -22,7 +22,6 @@ void update_color(us_type x, us_type y, BlockType block_type) {
             set_default_color(squares[y][x].color);
             break;
     }
-    gtk_widget_queue_draw(squares[y][x].widget);
 }
 
 // Redraw function for each square
@@ -71,5 +70,6 @@ gboolean draw_field(void* args){
         }
     }
     free(dr_par->mesh);
+    gtk_container_foreach(dr_par->grid_parent, (GtkCallback)gtk_widget_queue_draw, NULL);
     return G_SOURCE_REMOVE;
 }

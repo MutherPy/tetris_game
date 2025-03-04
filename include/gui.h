@@ -4,6 +4,11 @@
     #define TYPES_SET
 #endif
 
+#ifndef OBJECT_SET
+    #include "object.h"
+    #define  OBJECT_SET
+#endif
+
 #ifndef TETRIS_GUI_SET
 #define TETRIS_GUI_SET
 
@@ -29,10 +34,15 @@
     typedef struct {
         us_type** mesh;
         us_type mesh_len;
+        GtkContainer* grid_parent;
     } DrawParams;
 
+    typedef struct {
+        Object** current_object;
+        GtkContainer* parent_grid;
+    } GameLogicParams;
+
     GtkWidget* create_colored_square(int x, int y);
-    void update_color(us_type x, us_type y, BlockType block_type);
     gboolean draw_field(void* args);
 
 #endif

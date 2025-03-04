@@ -40,8 +40,10 @@ static gboolean downer(gpointer args){
 }
 
 static void* game_logic(gpointer args){
-    Object** current_obj_ptr = (Object**)args;
+    GameLogicParams* g_params_ptr = (GameLogicParams*)args;
+    Object** current_obj_ptr = g_params_ptr->current_object;
     DrawParams dr_params;
+    dr_params.grid_parent = g_params_ptr->parent_grid;
     while(run_game) {
         dr_params.mesh = manage_field(*current_obj_ptr);
         dr_params.mesh_len = get_mesh_sum(*current_obj_ptr);
@@ -81,7 +83,13 @@ int main(int argc, char** argv) {
     g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &current_obj);
 
     g_timeout_add(DOWN_DELAY, downer, &current_obj);
-    g_thread_new("game_logic", game_logic, &current_obj);
+
+    GameLogicParams g_params = {
+            .current_object = &current_obj,
+            .parent_grid = (GtkContainer* )grid
+    };
+
+    g_thread_new("game_logic", game_logic, &g_params);
     gtk_widget_show_all(window);
     gtk_main();
     run_game = false;
