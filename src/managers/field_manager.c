@@ -81,7 +81,7 @@ static void collision_check(Object* current_obj){
         }
 
         for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
-            if (x == filled_field[j][0] && y == filled_field[j][1]){
+            if (x == filled_field[j][0] && y + 1 == filled_field[j][1]){
                 current_obj->is_collision = true;
                 return;
             }
