@@ -6,7 +6,7 @@
     #define FIELD_ROWS 20
     #define FIELD_COLS 20
 
-    typedef unsigned short us_type;
+    typedef short us_type;
 
     typedef enum act {
         OBJECT_ACTION_LEFT=1,

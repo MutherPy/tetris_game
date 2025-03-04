@@ -6,9 +6,6 @@
 #include "../../include/memory_utils.h"
 #include "../../include/gui.h"
 
-#define FIELD_FILLER '+'
-#define FIGURE_BLOCK '#'
-
 // filled_coords = [[x,y], [x,y], ...]
 // x - FIELD_COLS
 // y - FIELD_ROWS
@@ -84,7 +81,7 @@ static void collision_check(Object* current_obj){
         }
 
         for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
-            if (x == filled_field[j][0] && y+1 == filled_field[j][1]){
+            if (x == filled_field[j][0] && y == filled_field[j][1]){
                 current_obj->is_collision = true;
                 return;
             }

@@ -4,8 +4,8 @@
 
 static us_type* inner_memory_allocator(us_type inner_size){
     us_type* inner = (us_type*)malloc(inner_size * sizeof(us_type));
-    inner[0] = -1;
-    inner[1] = -1;
+    inner[0] = 0;
+    inner[1] = 0;
     return inner;
 }
 
