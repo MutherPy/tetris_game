@@ -42,9 +42,10 @@ static gboolean downer(gpointer args){
 static void* game_logic(gpointer args){
     GameLogicParams* g_params_ptr = (GameLogicParams*)args;
     Object** current_obj_ptr = g_params_ptr->current_object;
-    DrawParams dr_params;
-    dr_params.grid_parent = g_params_ptr->parent_grid;
+
     while(run_game) {
+        DrawParams dr_params;
+        dr_params.grid_parent = g_params_ptr->parent_grid;
         dr_params.mesh = manage_field(*current_obj_ptr);
         dr_params.mesh_len = get_mesh_sum(*current_obj_ptr);
 
@@ -88,9 +89,8 @@ int main(int argc, char** argv) {
             .current_object = &current_obj,
             .parent_grid = (GtkContainer* )grid
     };
-
-    g_thread_new("game_logic", game_logic, &g_params);
     gtk_widget_show_all(window);
+    g_thread_new("game_logic", game_logic, &g_params);
     gtk_main();
     run_game = false;
     return 0;

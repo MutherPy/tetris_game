@@ -1,10 +1,13 @@
 #include <stdbool.h>
+#include <pthread.h>
 
 #ifndef TYPES_SET
     #define TYPES_SET
 
     #define FIELD_ROWS 20
     #define FIELD_COLS 20
+
+    pthread_mutex_t lock;
 
     typedef short us_type;
 

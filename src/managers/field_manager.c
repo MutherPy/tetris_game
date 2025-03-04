@@ -22,72 +22,47 @@ void filled_field_init(){
     filled_field = memory_allocator(FILLED_FIELD_STORE_SIZE, COORD_UNIT_SIZE);
 }
 
-static void edge_filled_control(
-    us_type current_x,
-    us_type current_y,
-    bool* is_movable_left_ptr,
-    bool* is_movable_right_ptr,
-    Object* current_obj
-) {
-    if (!FILLED_FIELD_STORE_LAST_INDEX) return;
-    us_type filled_x, filled_y;
-    for (int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
-        filled_x = filled_field[i][0];
-        filled_y = filled_field[i][1];
-        if (current_x - 1 == filled_x && current_y == filled_y){
-            current_obj->is_movable_left = false;
-            *is_movable_left_ptr = false;
-            return;
-        }
-        if (current_x + 1 == filled_x && current_y == filled_y){
-            current_obj->is_movable_right = false;
-            *is_movable_right_ptr = false;
-            return;
-        }
-    }
-}
-
-static void edge_control(Object* current_obj){
+static void edge_collision_check(Object* current_obj){
     us_type** fig = current_obj->figure;
-    bool is_movable_left = true, is_movable_right = true, is_movable_down = true;
-    for(int i = 0; i < current_obj->figure_size; i++){
-        us_type x = fig[i][0];
-        us_type y = fig[i][1];
+    us_type filled_x, filled_y;
+    us_type current_x, current_y;
 
-        edge_filled_control(
-                x, y,
-                &is_movable_left,
-                &is_movable_right,
-                current_obj
-        );
-        if (is_movable_left) is_movable_left = (x > 0);
-        if (is_movable_right) is_movable_right = (x < FIELD_COLS-1);
-        if (is_movable_down) is_movable_down = (y < FIELD_ROWS-1);
+    bool is_movable_left = true, is_movable_right = true;
+
+    static const us_type check_y_amount = FIELD_ROWS - 1;
+    static const us_type check_x_amount = FIELD_COLS - 1;
+
+    for(int i = 0; i < current_obj->figure_size; i++) {
+        current_x = fig[i][0];
+        current_y = fig[i][1];
+        if (current_y >= check_y_amount){
+            current_obj->collision_stop(current_obj);
+            return;
+        }
+        current_obj->is_movable_left = is_movable_left = current_x > 0;
+        current_obj->is_movable_right = is_movable_right = current_x < check_x_amount;
+    }
+
+    for(int i = 0; i < current_obj->figure_size; i++) {
+        current_x = fig[i][0];
+        current_y = fig[i][1];
+        for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
+            filled_x = filled_field[j][0];
+            filled_y = filled_field[j][1];
+            if (current_x == filled_x && current_y + 1 == filled_y){
+                current_obj->collision_stop(current_obj);
+                return;
+            }
+            if (current_x - 1 == filled_x && current_y == filled_y){
+                is_movable_left = false;
+            }
+            if (current_x + 1 == filled_x && current_y == filled_y){
+                is_movable_right = false;
+            }
+        }
     }
     current_obj->is_movable_left = is_movable_left;
     current_obj->is_movable_right = is_movable_right;
-    current_obj->is_movable_down = is_movable_down;
-}
-
-static void collision_check(Object* current_obj){
-    us_type** fig = current_obj->figure;
-    for(int i = 0; i < current_obj->figure_size; i++) {
-        us_type y = fig[i][1];
-        us_type x = fig[i][0];
-
-        if (y >= FIELD_ROWS-1){
-            current_obj->is_collision = true;
-            return;
-        }
-
-        for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
-            if (x == filled_field[j][0] && y + 1 == filled_field[j][1]){
-                current_obj->is_collision = true;
-                return;
-            }
-        }
-
-    }
 }
 
 static void save_filled_field(Object* current_object){
@@ -124,10 +99,11 @@ us_type get_mesh_sum(Object* current_obj){
 
 us_type** manage_field(Object* current_obj){
     if (current_obj == NULL) return NULL;
-    edge_control(current_obj);
-    collision_check(current_obj);
+    pthread_mutex_lock(&lock);
+    edge_collision_check(current_obj);
     if (current_obj->is_collision)
         save_filled_field(current_obj);
     us_type sum = get_mesh_sum(current_obj);
+    pthread_mutex_unlock(&lock);
     return mesh(current_obj, sum);
 }

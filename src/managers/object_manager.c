@@ -4,9 +4,6 @@
 #include "../../include/memory_utils.h"
 
 
-static pthread_mutex_t lock;
-
-
 void object_action_manager(ObjectAction action, Object* current_obj){
     if (current_obj == NULL) return;
     pthread_mutex_lock(&lock);

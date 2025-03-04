@@ -24,6 +24,10 @@
         void (*rotate)(struct object*);
         void (*build)(struct object*);
         void (*move)(struct object*, ObjectAction);
+
+        void (*stop)(struct object*);
+        void (*collision_stop)(struct object*);
+
     } Object;
 
     static void object_method_setter(Object* obj);

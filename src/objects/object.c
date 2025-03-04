@@ -4,8 +4,8 @@
 #include "../../include/controllers/builders.h"
 #include "../../include/controllers/movers.h"
 #include "../../include/controllers/rotators.h"
+#include "../../include/controllers/stoppers.h"
 
-#include <stdio.h>
 
 static void object_method_setter(Object* obj){
     switch (obj->type) {
@@ -26,6 +26,8 @@ static void object_method_setter(Object* obj){
             break;
     }
     obj->move = figure_mover;
+    obj->stop = object_stop;
+    obj->collision_stop = object_stop_collision;
 }
 
 Object* create_object(ObjectType t){
