@@ -27,7 +27,7 @@ us_type** memory_reallocator(us_type** src, us_type old_outer_size, us_type ext_
     return cont;
 }
 
-static void memory_releaser(us_type size, us_type** cont){
+void memory_releaser(us_type size, us_type** cont){
     if(size==0){
         free(cont[0]);
         return;

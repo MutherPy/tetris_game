@@ -9,10 +9,12 @@
 #include "../include/object.h"
 #include "../include/object_manager.h"
 #include "../include/field_manager.h"
+#include "../include/memory_utils.h"
 
 #define DOWN_DELAY 300
 
 bool run_game = true;
+bool run_inner_game = true;
 
 static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     Object** current_obj_ptr = (Object**)user_data;
@@ -43,17 +45,26 @@ static void* game_logic(gpointer args){
     GameLogicParams* g_params_ptr = (GameLogicParams*)args;
     Object** current_obj_ptr = g_params_ptr->current_object;
 
-    while(run_game) {
-        DrawParams dr_params;
-        dr_params.grid_parent = g_params_ptr->parent_grid;
-        dr_params.mesh = manage_field(*current_obj_ptr);
-        dr_params.mesh_len = get_mesh_sum(*current_obj_ptr);
+    while (run_inner_game) {
+        while (run_game) {
+            if (*current_obj_ptr == NULL) continue;
+            DrawParams dr_params;
+            dr_params.grid_parent = g_params_ptr->parent_grid;
+            if ((dr_params.mesh = manage_field(*current_obj_ptr)) == NULL){
+                break;
+            }
+            dr_params.mesh_len = get_mesh_sum(*current_obj_ptr);
 
-        g_idle_add(draw_field, &dr_params);
+            g_idle_add(draw_field, &dr_params);
 
-        if ((*current_obj_ptr)->is_collision)
-            next_object(current_obj_ptr);
-        g_usleep(90000);
+            if ((*current_obj_ptr)->is_collision)
+                next_object(current_obj_ptr);
+            g_usleep(90000);
+        }
+        filled_field_cleanup();
+        run_game = true;
+        g_usleep(1000000);
+        next_object(current_obj_ptr);
     }
     return NULL;
 }
@@ -93,5 +104,6 @@ int main(int argc, char** argv) {
     g_thread_new("game_logic", game_logic, &g_params);
     gtk_main();
     run_game = false;
+    run_inner_game = false;
     return 0;
 }

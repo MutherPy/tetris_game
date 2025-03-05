@@ -22,6 +22,13 @@ void filled_field_init(){
     filled_field = memory_allocator(FILLED_FIELD_STORE_SIZE, COORD_UNIT_SIZE);
 }
 
+void filled_field_cleanup(){
+    memory_releaser(FILLED_FIELD_STORE_SIZE, filled_field);
+    FILLED_FIELD_STORE_LAST_INDEX = 0;
+    FILLED_FIELD_STORE_SIZE = 50;
+    filled_field_init();
+}
+
 static void edge_collision_check(Object* current_obj){
     us_type** fig = current_obj->figure;
     us_type filled_x, filled_y;
@@ -65,6 +72,13 @@ static void edge_collision_check(Object* current_obj){
     current_obj->is_movable_right = is_movable_right;
 }
 
+static bool overfill_field(){
+    for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
+        if (filled_field[i][1] == 0) return true;
+    }
+    return false;
+}
+
 static void save_filled_field(Object* current_object){
     us_type new_filled_index = FILLED_FIELD_STORE_LAST_INDEX + current_object->figure_size;
     while (new_filled_index > FILLED_FIELD_STORE_SIZE) {
@@ -98,9 +112,9 @@ us_type get_mesh_sum(Object* current_obj){
 }
 
 us_type** manage_field(Object* current_obj){
-    if (current_obj == NULL) return NULL;
     pthread_mutex_lock(&lock);
     edge_collision_check(current_obj);
+    if (overfill_field()) return NULL;
     if (current_obj->is_collision)
         save_filled_field(current_obj);
     us_type sum = get_mesh_sum(current_obj);
