@@ -22,13 +22,15 @@
     typedef enum tp {
         OBJECT_TYPE_LINE=1,
         OBJECT_TYPE_SS=2,
-        OBJECT_TYPE_SQW=3
+        OBJECT_TYPE_SQW=3,
+        OBJECT_TYPE_iSS=4
     } ObjectType;
 
     typedef enum sizes {
         OBJECT_SIZE_LINE=5,
         OBJECT_SIZE_SS=6,
-        OBJECT_SIZE_SQW=4
+        OBJECT_SIZE_SQW=4,
+        OBJECT_SIZE_iSS=6
     } ObjectSize;
 
 #endif

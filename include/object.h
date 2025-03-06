@@ -32,6 +32,5 @@
 
     static void object_method_setter(Object* obj);
     Object* create_object(ObjectType t);
-    ObjectType generate_type();
 
 #endif

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include "../../include/object.h"
 #include "../../include/memory_utils.h"
@@ -21,6 +22,10 @@ void object_action_manager(ObjectAction action, Object* current_obj){
     pthread_mutex_unlock(&lock);
 }
 
+
+ObjectType generate_type(){
+    return rand() % 4 + 1;
+}
 
 Object* new_object(){
     ObjectType t = generate_type();

@@ -62,7 +62,6 @@ static void* game_logic(gpointer args){
             g_usleep(90000);
         }
         filled_field_cleanup();
-        run_game = true;
         g_usleep(1000000);
         next_object(current_obj_ptr);
     }

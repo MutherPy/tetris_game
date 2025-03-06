@@ -24,6 +24,11 @@ static void object_method_setter(Object* obj){
             obj->build = sqw_figure_builder;
             obj->figure_size = OBJECT_SIZE_SQW;
             break;
+        case OBJECT_TYPE_iSS:
+            obj->rotate = iss_figure_rotator;
+            obj->build = iss_figure_builder;
+            obj->figure_size = OBJECT_SIZE_iSS;
+            break;
     }
     obj->move = figure_mover;
     obj->stop = object_stop;
@@ -44,8 +49,4 @@ Object* create_object(ObjectType t){
 
     new->build(new);
     return new;
-}
-
-ObjectType generate_type(){
-    return rand() % 3 + 1;
 }
