@@ -3,6 +3,7 @@
 #include "../../include/object.h"
 #include "../../include/memory_utils.h"
 #include "../../include/gui.h"
+#include "../../include/field_manager_types.h"
 
 // filled_coords = [[x,y], [x,y], ...]
 // x - FIELD_COLS
@@ -17,7 +18,20 @@ static us_type FILLED_FIELD_STORE_LAST_INDEX = 0;
 
 
 void filled_field_init(){
+//    FILLED_FIELD_STORE_SIZE = 70;
     filled_field = memory_allocator(FILLED_FIELD_STORE_SIZE, COORD_UNIT_SIZE);
+
+//    us_type y = 17;
+//    int ind = 0;
+//    for(int i = 0; i<3; i++){
+//        for(us_type j = 0; j<FIELD_COLS-1; j++){
+//            filled_field[ind][0]= j;
+//            filled_field[ind][1]= y;
+//            ind++;
+//        }
+//        y++;
+//    }
+//    FILLED_FIELD_STORE_LAST_INDEX = (FIELD_COLS-1) * 3;
 }
 
 void filled_field_cleanup(){
@@ -44,8 +58,8 @@ static void edge_collision_check(Object* current_obj){
             current_obj->collision_stop(current_obj);
             return;
         }
-        current_obj->is_movable_left = is_movable_left = current_x > 0;
-        current_obj->is_movable_right = is_movable_right = current_x < check_x_amount;
+        if (current_x <= 0 && is_movable_left) is_movable_left = false;
+        if (current_x >= check_x_amount && is_movable_right) is_movable_right = false;
     }
 
     for(int i = 0; i < current_obj->figure_size; i++) {
@@ -96,6 +110,71 @@ static void save_filled_field(Object* current_object){
     FILLED_FIELD_STORE_LAST_INDEX = new_filled_index;
 }
 
+static List* filled_lines_to_remove(){
+    us_type uniq_keys[FIELD_ROWS] = {0};
+    us_type count[FIELD_ROWS] = {0};
+    us_type uniq_keys_size = 0;
+    us_type current_key;
+    bool found;
+
+    for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
+        current_key = filled_field[i][1];
+        found = false;
+        for(int j = 0; j < uniq_keys_size; j++){
+            if (uniq_keys[j] == current_key) {
+                count[j]++;
+                found = true;
+            }
+        }
+        if (!found){
+            uniq_keys[uniq_keys_size] = current_key;
+            count[uniq_keys_size] = 1;
+            uniq_keys_size++;
+        }
+    }
+
+    List* list = (List*)malloc(sizeof(List));
+    init_list(list);
+
+    for(int j = 0; j < uniq_keys_size; j++){
+        if (count[j] >= FIELD_COLS) {
+            append(list, uniq_keys[j]);
+        }
+    }
+    return list;
+}
+
+static bool handle_remove_lines(List* list){
+    us_type current_index;
+    us_type* current_filled_pixel;
+    bool was_deleted = false;
+    for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
+        current_index = 0;
+        current_filled_pixel = filled_field[i];
+        while (current_index < list->size){
+            if(current_filled_pixel[1] == get_val(list, current_index)){
+                FILLED_FIELD_STORE_LAST_INDEX--;
+                current_filled_pixel[0] = filled_field[FILLED_FIELD_STORE_LAST_INDEX][0];
+                current_filled_pixel[1] = filled_field[FILLED_FIELD_STORE_LAST_INDEX][1];
+                filled_field[FILLED_FIELD_STORE_LAST_INDEX][0] = 0;
+                filled_field[FILLED_FIELD_STORE_LAST_INDEX][1] = 0;
+                i--;
+                current_index++;
+                if (!was_deleted) was_deleted = true;
+                break;
+            }
+            current_index++;
+        }
+    }
+    return was_deleted;
+}
+
+static void move_filled_field_after_remove_lines(us_type amount){
+    for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
+        filled_field[i][1] += amount;
+    }
+}
+
 static us_type** mesh(Object* current_obj, us_type mesh_sum){
     us_type** mesh = memory_allocator(mesh_sum, COORD_UNIT_SIZE);
     int offset = 0;
@@ -113,8 +192,13 @@ us_type** manage_field(Object* current_obj){
     pthread_mutex_lock(&lock);
     edge_collision_check(current_obj);
     if (overfill_field()) return NULL;
-    if (current_obj->is_collision)
+    if (current_obj->is_collision) {
         save_filled_field(current_obj);
+        List* to_remove_list = filled_lines_to_remove();
+        bool was_removed_lines = handle_remove_lines(to_remove_list);
+        if (was_removed_lines) move_filled_field_after_remove_lines(to_remove_list->size);
+        free_list(to_remove_list);
+    }
     us_type sum = get_mesh_sum(current_obj);
     pthread_mutex_unlock(&lock);
     return mesh(current_obj, sum);

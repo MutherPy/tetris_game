@@ -22,8 +22,7 @@ void object_action_manager(ObjectAction action, Object* current_obj){
     pthread_mutex_unlock(&lock);
 }
 
-
-ObjectType generate_type(){
+static ObjectType generate_type(){
     return rand() % 4 + 1;
 }
 
@@ -35,6 +34,5 @@ Object* new_object(){
 void next_object(Object** current_obj){
     free_object(*current_obj);
     *current_obj = NULL;
-    ObjectType t = generate_type();
-    *current_obj = create_object(t);
+    *current_obj = new_object();
 }
