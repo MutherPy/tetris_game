@@ -145,33 +145,42 @@ static List* filled_lines_to_remove(){
 }
 
 static bool handle_remove_lines(List* list){
-    us_type current_index;
     us_type* current_filled_pixel;
+
+    us_type current_index = 0;
     bool was_deleted = false;
-    for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
-        current_index = 0;
-        current_filled_pixel = filled_field[i];
-        while (current_index < list->size){
-            if(current_filled_pixel[1] == get_val(list, current_index)){
+
+    while (current_index < list->size){
+        us_type to_remove_y = get_val(list, current_index);
+        for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
+            current_filled_pixel = filled_field[i];
+            if (to_remove_y == current_filled_pixel[1]){
                 FILLED_FIELD_STORE_LAST_INDEX--;
                 current_filled_pixel[0] = filled_field[FILLED_FIELD_STORE_LAST_INDEX][0];
                 current_filled_pixel[1] = filled_field[FILLED_FIELD_STORE_LAST_INDEX][1];
                 filled_field[FILLED_FIELD_STORE_LAST_INDEX][0] = 0;
                 filled_field[FILLED_FIELD_STORE_LAST_INDEX][1] = 0;
                 i--;
-                current_index++;
                 if (!was_deleted) was_deleted = true;
-                break;
             }
-            current_index++;
         }
+        current_index++;
     }
     return was_deleted;
 }
 
-static void move_filled_field_after_remove_lines(us_type amount){
-    for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
-        filled_field[i][1] += amount;
+static void move_filled_field_after_remove_lines(List* to_remove_list){
+    us_type curr_line_index;
+    us_type curr_line;
+    for (int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++) {
+        curr_line_index = 0;
+        while (curr_line_index < to_remove_list->size) {
+            curr_line = get_val(to_remove_list, curr_line_index);
+            if(filled_field[i][1] < curr_line) {
+                filled_field[i][1]++;
+            }
+            curr_line_index++;
+        }
     }
 }
 
@@ -196,7 +205,7 @@ us_type** manage_field(Object* current_obj){
         save_filled_field(current_obj);
         List* to_remove_list = filled_lines_to_remove();
         bool was_removed_lines = handle_remove_lines(to_remove_list);
-        if (was_removed_lines) move_filled_field_after_remove_lines(to_remove_list->size);
+        if (was_removed_lines) move_filled_field_after_remove_lines(to_remove_list);
         free_list(to_remove_list);
     }
     us_type sum = get_mesh_sum(current_obj);
