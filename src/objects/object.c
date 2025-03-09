@@ -47,6 +47,8 @@ Object* create_object(ObjectType t){
     new->is_movable_right = true;
     new->is_movable_down = true;
 
+    new->is_acted = false;
+
     new->build(new);
     return new;
 }

@@ -18,6 +18,8 @@
         bool is_movable_right;
         bool is_movable_down;
 
+        bool is_acted;
+
         ObjectSize figure_size;
         us_type** figure;
 

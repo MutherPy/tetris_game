@@ -32,7 +32,7 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer use
             object_action_manager(OBJECT_ACTION_ROTATE, *current_obj_ptr);
             break;
     }
-    return FALSE; // Return TRUE to stop event propagation
+    return FALSE;
 }
 
 static gboolean downer(gpointer args){
@@ -45,18 +45,25 @@ static void* game_logic(gpointer args){
     GameLogicParams* g_params_ptr = (GameLogicParams*)args;
     Object** current_obj_ptr = g_params_ptr->current_object;
 
+    DrawParams dr_params;
+    dr_params.grid_parent = g_params_ptr->parent_grid;
+
     while (run_inner_game) {
         while (run_game) {
-            if (*current_obj_ptr == NULL) continue;
-            DrawParams dr_params;
-            dr_params.grid_parent = g_params_ptr->parent_grid;
-            if ((dr_params.mesh = manage_field(*current_obj_ptr)) == NULL){
+            if (*current_obj_ptr == NULL || !(*current_obj_ptr)->is_acted) {
+                g_usleep(90000);
+                continue;
+            }
+
+            dr_params.mesh = manage_field(*current_obj_ptr);
+            if (dr_params.mesh == NULL){
                 break;
             }
             dr_params.mesh_len = get_mesh_sum(*current_obj_ptr);
 
             g_idle_add(draw_field, &dr_params);
 
+            set_object_as_unacted(*current_obj_ptr);
             if ((*current_obj_ptr)->is_collision)
                 next_object(current_obj_ptr);
             g_usleep(90000);
