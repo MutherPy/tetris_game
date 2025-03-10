@@ -14,10 +14,6 @@
         bool is_rotated;
         bool is_collision;
 
-        bool is_movable_left;
-        bool is_movable_right;
-        bool is_movable_down;
-
         bool is_acted;
 
         ObjectSize figure_size;
@@ -27,7 +23,6 @@
         void (*build)(struct object*);
         void (*move)(struct object*, ObjectAction);
 
-        void (*stop)(struct object*);
         void (*collision_stop)(struct object*);
 
     } Object;

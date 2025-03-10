@@ -50,11 +50,11 @@ static void* game_logic(gpointer args){
 
     while (run_inner_game) {
         while (run_game) {
-            if (*current_obj_ptr == NULL || !(*current_obj_ptr)->is_acted) {
+            if (*current_obj_ptr == NULL) continue;
+            if (!(*current_obj_ptr)->is_acted) {
                 g_usleep(90000);
                 continue;
             }
-
             dr_params.mesh = manage_field(*current_obj_ptr);
             if (dr_params.mesh == NULL){
                 break;
@@ -100,14 +100,13 @@ int main(int argc, char** argv) {
     gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
     g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &current_obj);
 
-    g_timeout_add(DOWN_DELAY, downer, &current_obj);
-
     GameLogicParams g_params = {
             .current_object = &current_obj,
             .parent_grid = (GtkContainer* )grid
     };
     gtk_widget_show_all(window);
     g_thread_new("game_logic", game_logic, &g_params);
+    g_timeout_add(DOWN_DELAY, downer, &current_obj);
     gtk_main();
     run_game = false;
     run_inner_game = false;

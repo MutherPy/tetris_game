@@ -1,37 +1,45 @@
 #include <stdio.h>
 #include "../../../include/object.h"
+#include "../../../include/field_manager.h"
 
-static void down_mover(us_type** figure, us_type size){
-    for (int i=0; i<size; i++){
-        figure[i][1] += 1;
+
+static void down_mover(Object* current_obj){
+    if (edge_d_mover_check(current_obj)){
+        current_obj->collision_stop(current_obj);
+        return;
+    }
+    for (int i=0; i<current_obj->figure_size; i++){
+        current_obj->figure[i][1] += 1;
     }
 }
 
-static void left_mover(us_type** figure, us_type size){
-    for (int i=0; i<size; i++){
-        figure[i][0] -= 1;
+static void left_mover(Object* current_obj){
+    if (edge_lr_movers_check(current_obj, OBJECT_ACTION_LEFT))
+        return;
+    for (int i=0; i<current_obj->figure_size; i++){
+        current_obj->figure[i][0] -= 1;
     }
 }
 
-static void right_mover(us_type** figure, us_type size){
-    for (int i=0; i<size; i++){
-        figure[i][0] += 1;
+static void right_mover(Object* current_obj){
+    if (edge_lr_movers_check(current_obj, OBJECT_ACTION_RIGHT))
+        return;
+    for (int i=0; i<current_obj->figure_size; i++){
+        current_obj->figure[i][0] += 1;
     }
 }
+
 
 void figure_mover(Object* obj, ObjectAction action){
     switch (action) {
         case OBJECT_ACTION_DOWN:
-            if (!obj->is_movable_down) break;
-            down_mover(obj->figure, obj->figure_size);
+            down_mover(obj);
             break;
         case OBJECT_ACTION_LEFT:
-            if (!obj->is_movable_left) break;
-            left_mover(obj->figure, obj->figure_size);
+            left_mover(obj);
             break;
         case OBJECT_ACTION_RIGHT:
-            if (!obj->is_movable_right) break;
-            right_mover(obj->figure, obj->figure_size);
+            right_mover(obj);
             break;
         default:
             break;

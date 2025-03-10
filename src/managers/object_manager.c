@@ -15,8 +15,9 @@ void set_object_as_unacted(Object* current_obj){
 
 void object_action_manager(ObjectAction action, Object* current_obj){
     if (current_obj == NULL) return;
-    pthread_mutex_lock(&lock);
     if (current_obj->is_collision) return;
+
+    pthread_mutex_lock(&lock);
     switch (action) {
         case OBJECT_ACTION_RIGHT:
         case OBJECT_ACTION_LEFT:

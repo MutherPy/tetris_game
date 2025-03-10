@@ -2,7 +2,7 @@
 #include "../../../include/memory_utils.h"
 
 
-void line_figure_builder(Object* obj){
+static void line_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 2;
     us_type size = obj->figure_size;
     us_type** line = memory_allocator(size, COORD_UNIT_SIZE);
@@ -13,7 +13,7 @@ void line_figure_builder(Object* obj){
     obj->figure = line;
 }
 
-void ss_figure_builder(Object* obj){
+static void ss_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 3;
     us_type size = obj->figure_size;
     us_type** ss = memory_allocator(size, COORD_UNIT_SIZE);
@@ -30,7 +30,7 @@ void ss_figure_builder(Object* obj){
     obj->figure = ss;
 }
 
-void sqw_figure_builder(Object* obj){
+static void sqw_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 1;
     us_type size = obj->figure_size;
     us_type** ss = memory_allocator(size, COORD_UNIT_SIZE);
@@ -47,7 +47,7 @@ void sqw_figure_builder(Object* obj){
     obj->figure = ss;
 }
 
-void iss_figure_builder(Object* obj){
+static void iss_figure_builder(Object* obj){
     us_type left = FIELD_COLS / 2 - 3;
     us_type size = obj->figure_size;
     us_type** ss = memory_allocator(size, COORD_UNIT_SIZE);
@@ -62,4 +62,25 @@ void iss_figure_builder(Object* obj){
         }
     }
     obj->figure = ss;
+}
+
+
+void figure_builder(Object* obj){
+    switch (obj->type) {
+        case OBJECT_TYPE_LINE:
+            line_figure_builder(obj);
+            break;
+        case OBJECT_TYPE_SS:
+            ss_figure_builder(obj);
+            break;
+        case OBJECT_TYPE_SQW:
+            sqw_figure_builder(obj);
+            break;
+        case OBJECT_TYPE_iSS:
+            iss_figure_builder(obj);
+            break;
+        default:
+            break;
+    }
+
 }

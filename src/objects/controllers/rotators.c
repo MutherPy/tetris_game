@@ -1,7 +1,8 @@
 #include "../../../include/object.h"
+#include "../../../include/field_manager.h"
 
 
-void line_figure_rotator(Object* obj){
+static void line_figure_rotator(Object* obj){
     us_type mid = obj->figure_size / 2;
     us_type** inner_f = obj->figure;
     us_type* f = inner_f[mid];
@@ -19,7 +20,7 @@ void line_figure_rotator(Object* obj){
     obj->is_rotated = !obj->is_rotated;
 }
 
-void ss_figure_rotator(Object* obj){
+static void ss_figure_rotator(Object* obj){
     us_type** inner_f = obj->figure;
     us_type* f = inner_f[2];
     if (obj->is_rotated){
@@ -46,11 +47,11 @@ void ss_figure_rotator(Object* obj){
     obj->is_rotated = !obj->is_rotated;
 }
 
-void sqw_figure_rotator(Object* obj){
+static void sqw_figure_rotator(Object* obj){
     obj->is_rotated = !obj->is_rotated;
 }
 
-void iss_figure_rotator(Object* obj){
+static void iss_figure_rotator(Object* obj){
     us_type** inner_f = obj->figure;
     us_type* f = inner_f[2];
     if (obj->is_rotated){
@@ -75,4 +76,24 @@ void iss_figure_rotator(Object* obj){
         }
     }
     obj->is_rotated = !obj->is_rotated;
+}
+
+
+void figure_rotator(Object* obj){
+    switch (obj->type) {
+        case OBJECT_TYPE_LINE:
+            edge_rotator_check(obj, line_figure_rotator);
+            break;
+        case OBJECT_TYPE_SS:
+            edge_rotator_check(obj, ss_figure_rotator);
+            break;
+        case OBJECT_TYPE_SQW:
+            edge_rotator_check(obj, sqw_figure_rotator);
+            break;
+        case OBJECT_TYPE_iSS:
+            edge_rotator_check(obj, iss_figure_rotator);
+            break;
+        default:
+            break;
+    }
 }

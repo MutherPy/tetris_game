@@ -41,48 +41,85 @@ void filled_field_cleanup(){
     filled_field_init();
 }
 
-static void edge_collision_check(Object* current_obj){
+
+
+bool edge_lr_movers_check(Object* current_obj, ObjectAction act){
+    us_type** fig = current_obj->figure;
+    us_type current_x, current_y, filled_x, filled_y;
+
+    for(int i = 0; i < current_obj->figure_size; i++) {
+        current_x = fig[i][0];
+        if (act == OBJECT_ACTION_LEFT && current_x - 1 < 0) return true;
+        if (act == OBJECT_ACTION_RIGHT && current_x + 1 >= FIELD_COLS) return true;
+    }
+
+    for(int i = 0; i < current_obj->figure_size; i++){
+        current_x = fig[i][0];
+        current_y = fig[i][1];
+        for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
+            filled_x = filled_field[j][0];
+            filled_y = filled_field[j][1];
+            if (act == OBJECT_ACTION_LEFT && current_x - 1 == filled_x && current_y == filled_y){
+                 return true;
+            }
+            if (act == OBJECT_ACTION_RIGHT &&current_x + 1 == filled_x && current_y == filled_y){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool edge_d_mover_check(Object* current_obj){
     us_type** fig = current_obj->figure;
     us_type filled_x, filled_y;
     us_type current_x, current_y;
 
-    bool is_movable_left = true, is_movable_right = true;
-
-    static const us_type check_y_amount = FIELD_ROWS - 1;
-    static const us_type check_x_amount = FIELD_COLS - 1;
-
-    for(int i = 0; i < current_obj->figure_size; i++) {
-        current_x = fig[i][0];
+    for(int i = 0; i < current_obj->figure_size; i++){
         current_y = fig[i][1];
-        if (current_y >= check_y_amount){
-            current_obj->collision_stop(current_obj);
-            return;
+        if (current_y + 1 >= FIELD_ROWS){
+            return true;
         }
-        if (current_x <= 0 && is_movable_left) is_movable_left = false;
-        if (current_x >= check_x_amount && is_movable_right) is_movable_right = false;
     }
-
-    for(int i = 0; i < current_obj->figure_size; i++) {
+    for(int i = 0; i < current_obj->figure_size; i++){
         current_x = fig[i][0];
         current_y = fig[i][1];
         for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
             filled_x = filled_field[j][0];
             filled_y = filled_field[j][1];
             if (current_x == filled_x && current_y + 1 == filled_y){
-                current_obj->collision_stop(current_obj);
-                return;
-            }
-            if (current_x - 1 == filled_x && current_y == filled_y){
-                is_movable_left = false;
-            }
-            if (current_x + 1 == filled_x && current_y == filled_y){
-                is_movable_right = false;
+                return true;
             }
         }
     }
-    current_obj->is_movable_left = is_movable_left;
-    current_obj->is_movable_right = is_movable_right;
+    return false;
 }
+
+void edge_rotator_check(Object* current_obj, void (*rotator)(Object*)){
+    rotator(current_obj);
+
+    us_type** fig = current_obj->figure;
+    us_type filled_x, filled_y;
+    us_type current_x, current_y;
+    bool brk = false;
+    for(int i = 0; i < current_obj->figure_size; i++){
+        current_x = fig[i][0];
+        current_y = fig[i][1];
+        for(int j = 0; j < FILLED_FIELD_STORE_LAST_INDEX; j++){
+            filled_x = filled_field[j][0];
+            filled_y = filled_field[j][1];
+            if (current_x == filled_x && current_y == filled_y){
+                brk = true;
+                break;
+            }
+        }
+        if (brk) break;
+    }
+    if (brk)
+        rotator(current_obj);
+}
+
+
 
 static bool overfill_field(){
     for(int i = 0; i < FILLED_FIELD_STORE_LAST_INDEX; i++){
@@ -144,11 +181,10 @@ static List* filled_lines_to_remove(){
     return list;
 }
 
-static bool handle_remove_lines(List* list){
+static void handle_remove_lines(List* list){
     us_type* current_filled_pixel;
 
     us_type current_index = 0;
-    bool was_deleted = false;
 
     while (current_index < list->size){
         us_type to_remove_y = get_val(list, current_index);
@@ -161,12 +197,10 @@ static bool handle_remove_lines(List* list){
                 filled_field[FILLED_FIELD_STORE_LAST_INDEX][0] = 0;
                 filled_field[FILLED_FIELD_STORE_LAST_INDEX][1] = 0;
                 i--;
-                if (!was_deleted) was_deleted = true;
             }
         }
         current_index++;
     }
-    return was_deleted;
 }
 
 static void move_filled_field_after_remove_lines(List* to_remove_list){
@@ -199,13 +233,15 @@ us_type get_mesh_sum(Object* current_obj){
 
 us_type** manage_field(Object* current_obj){
     pthread_mutex_lock(&lock);
-    edge_collision_check(current_obj);
-    if (overfill_field()) return NULL;
+    if (overfill_field())
+        return NULL;
     if (current_obj->is_collision) {
         save_filled_field(current_obj);
         List* to_remove_list = filled_lines_to_remove();
-        bool was_removed_lines = handle_remove_lines(to_remove_list);
-        if (was_removed_lines) move_filled_field_after_remove_lines(to_remove_list);
+        if (to_remove_list->size) {
+            handle_remove_lines(to_remove_list);
+            move_filled_field_after_remove_lines(to_remove_list);
+        }
         free_list(to_remove_list);
     }
     us_type sum = get_mesh_sum(current_obj);
