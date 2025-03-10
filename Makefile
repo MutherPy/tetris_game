@@ -1,6 +1,10 @@
 
+CFLAGS = `pkg-config --cflags gtk+-3.0`
+LDFLAGS = `pkg-config --libs gtk+-3.0`
+
 SRC_DIR := src
 
+GTK_CHECK := $(shell pkg-config --exists gtk+-3.0 && echo 1 || echo 0)
 
 targets := \
  $(wildcard $(SRC_DIR)/*.c) \
@@ -9,8 +13,10 @@ targets := \
  $(wildcard $(SRC_DIR)/*/*/*/*.c)
 
 compile: $(targets)
-	#echo $?
-	@(clang $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main || gcc $? `pkg-config --cflags --libs gtk+-3.0` -o bin/main) && echo 'Yo, aka'
+	@if [ $(GTK_CHECK) -eq 0 ]; then \
+		brew install -y gtk+3; \
+	fi
+	@(clang $? $(CFLAGS) -o bin/main $(LDFLAGS) || gcc $? $(CFLAGS) -o bin/main $(LDFLAGS)) && echo 'Yo, aka'
 
 run: compile
 	@./bin/main

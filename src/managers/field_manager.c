@@ -18,20 +18,7 @@ static us_type FILLED_FIELD_STORE_LAST_INDEX = 0;
 
 
 void filled_field_init(){
-//    FILLED_FIELD_STORE_SIZE = 70;
     filled_field = memory_allocator(FILLED_FIELD_STORE_SIZE, COORD_UNIT_SIZE);
-
-//    us_type y = 17;
-//    int ind = 0;
-//    for(int i = 0; i<3; i++){
-//        for(us_type j = 0; j<FIELD_COLS-1; j++){
-//            filled_field[ind][0]= j;
-//            filled_field[ind][1]= y;
-//            ind++;
-//        }
-//        y++;
-//    }
-//    FILLED_FIELD_STORE_LAST_INDEX = (FIELD_COLS-1) * 3;
 }
 
 void filled_field_cleanup(){
