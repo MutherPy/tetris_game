@@ -14,7 +14,7 @@ targets := \
 
 compile: $(targets)
 	@if [ $(GTK_CHECK) -eq 0 ]; then \
-		brew install -y gtk+3; \
+		brew install gtk+3; \
 	fi
 	@(clang $? $(CFLAGS) -o bin/main $(LDFLAGS) || gcc $? $(CFLAGS) -o bin/main $(LDFLAGS)) && echo 'Yo, aka'
 
