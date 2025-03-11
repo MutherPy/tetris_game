@@ -1,6 +1,6 @@
 
-CFLAGS = `pkg-config --cflags gtk+-3.0`
-LDFLAGS = `pkg-config --libs gtk+-3.0`
+CFLAGS =  -Wall `pkg-config --cflags gtk+-3.0` -pthread
+LDFLAGS =  -Wall `pkg-config --libs gtk+-3.0` -pthread
 
 SRC_DIR := src
 
