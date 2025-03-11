@@ -89,6 +89,15 @@ void edge_rotator_check(Object* current_obj, void (*rotator)(Object*)){
     us_type filled_x, filled_y;
     us_type current_x, current_y;
     bool brk = false;
+
+    for(int i = 0; i < current_obj->figure_size; i++) {
+        current_x = fig[i][0];
+        if (current_x < 0 || current_x >= FIELD_COLS){
+            rotator(current_obj);
+            return;
+        }
+    }
+
     for(int i = 0; i < current_obj->figure_size; i++){
         current_x = fig[i][0];
         current_y = fig[i][1];

@@ -66,7 +66,7 @@ static void* game_logic(gpointer args){
             set_object_as_unacted(*current_obj_ptr);
             if ((*current_obj_ptr)->is_collision)
                 next_object(current_obj_ptr);
-            g_usleep(90000);
+            g_usleep(90000); // without draw_field crash due to mesh -> unknown pointing :(
         }
         filled_field_cleanup();
         g_usleep(1000000);
